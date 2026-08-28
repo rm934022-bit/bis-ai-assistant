@@ -1,0 +1,2398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>BIS AI Assistant</title>
+
+<style>
+  :root{
+    --navy:#0d2149;
+    --navy-light:#122a5c;
+    --blue:#2f6fed;
+    --blue-light:#eaf1ff;
+    --green:#1fae63;
+    --orange:#f0932b;
+    --purple:#8b5cf6;
+    --pink:#ec4899;
+    --teal:#14b8a6;
+    --text-dark:#0f1b33;
+    --text-mid:#5a6479;
+    --text-light:#8b93a7;
+    --border:#e6e9f0;
+    --bg:#f4f6fb;
+    --radius:14px;
+  }
+
+  *{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+  }
+
+  body{
+    font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg);
+    color:var(--text-dark);
+    display:flex;
+    min-height:100vh;
+  }
+
+  a{
+    text-decoration:none;
+    color:inherit;
+  }
+
+  /* ---------- SIDEBAR ---------- */
+
+  .sidebar{
+    width:260px;
+    background:linear-gradient(180deg,var(--navy) 0%, #0a1a3a 100%);
+    color:#fff;
+    display:flex;
+    flex-direction:column;
+    padding:22px 18px;
+    flex-shrink:0;
+    position:relative;
+    overflow:hidden;
+  }
+
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:28px;
+  }
+
+  .brand-icon{
+    width:44px;
+    height:44px;
+    border-radius:10px;
+    background:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  .brand-icon svg{
+    width:26px;
+    height:26px;
+  }
+
+  .brand-name{
+    font-size:17px;
+    font-weight:700;
+    line-height:1.2;
+  }
+
+  .brand-tag{
+    font-size:11px;
+    color:#9fb0d9;
+    margin-top:2px;
+  }
+
+  nav.main-nav{
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+  }
+
+  .nav-item{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:12px 14px;
+    border-radius:10px;
+    font-size:14.5px;
+    font-weight:500;
+    color:#c7d1ec;
+    cursor:pointer;
+  }
+
+  .nav-item:hover{
+    background:rgba(255,255,255,.08);
+  }
+
+  .nav-item svg{
+    width:19px;
+    height:19px;
+    flex-shrink:0;
+  }
+
+  .nav-item.active{
+    background:var(--blue);
+    color:#fff;
+    box-shadow:0 4px 14px rgba(47,111,237,.4);
+  }
+
+  .nav-item .badge{
+    margin-left:auto;
+    background:#ef4444;
+    color:#fff;
+    font-size:11px;
+    font-weight:700;
+    padding:2px 7px;
+    border-radius:20px;
+  }
+
+  .sidebar-footer{
+    margin-top:auto;
+    padding-top:18px;
+  }
+
+  .bis-card{
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:12px;
+    padding:16px;
+    text-align:left;
+  }
+
+  .bis-card .emblem{
+    font-size:26px;
+    margin-bottom:8px;
+    opacity:.9;
+  }
+
+  .bis-card h4{
+    font-size:14px;
+    margin-bottom:6px;
+  }
+
+  .bis-card p{
+    font-size:11.5px;
+    color:#9fb0d9;
+    line-height:1.5;
+    margin-bottom:10px;
+  }
+
+  .bis-card .learn{
+    font-size:12.5px;
+    font-weight:600;
+    color:#7fa4ff;
+  }
+
+  /* ---------- MAIN ---------- */
+
+  .main{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    min-width:0;
+  }
+
+  header{
+    display:flex;
+    align-items:center;
+    gap:16px;
+    padding:16px 28px;
+    background:#fff;
+    border-bottom:1px solid var(--border);
+  }
+
+  .search-box{
+    flex:1;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background:#f4f6fb;
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:10px 16px;
+    color:var(--text-light);
+    font-size:14px;
+  }
+
+  .search-box svg{
+    width:16px;
+    height:16px;
+    flex-shrink:0;
+  }
+
+  .header-right{
+    display:flex;
+    align-items:center;
+    gap:14px;
+  }
+
+  .lang-pill{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    border:1px solid var(--border);
+    padding:8px 12px;
+    border-radius:20px;
+    font-size:13px;
+    color:var(--text-mid);
+  }
+
+  .icon-btn{
+    width:38px;
+    height:38px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#f4f6fb;
+    position:relative;
+    color:var(--text-mid);
+  }
+
+  .icon-btn .dot{
+    position:absolute;
+    top:6px;
+    right:7px;
+    width:8px;
+    height:8px;
+    background:#ef4444;
+    border-radius:50%;
+    border:2px solid #fff;
+  }
+
+  .user-chip{
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+
+  .user-avatar{
+    width:36px;
+    height:36px;
+    border-radius:50%;
+    background:var(--blue);
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:700;
+    font-size:14px;
+  }
+
+  .user-meta{
+    font-size:13px;
+    line-height:1.3;
+  }
+
+  .user-meta .name{
+    font-weight:700;
+  }
+
+  .user-meta .role{
+    color:var(--text-light);
+    font-size:11.5px;
+  }
+
+  .content{
+    flex:1;
+    display:grid;
+    grid-template-columns:1fr 320px;
+    gap:22px;
+    padding:24px 28px;
+    align-items:start;
+  }
+
+  .col-main{
+    display:flex;
+    flex-direction:column;
+    gap:20px;
+    min-width:0;
+  }
+
+  /* ---------- HERO ---------- */
+
+  .hero{
+    position:relative;
+    border-radius:18px;
+    overflow:hidden;
+    padding:32px;
+    min-height:150px;
+
+    background:
+      linear-gradient(
+        120deg,
+        rgba(255,255,255,.94) 0%,
+        rgba(255,255,255,.55) 55%,
+        rgba(210,225,250,.25) 100%
+      ),
+      linear-gradient(135deg,#dfe9fb,#c9d9f5);
+  }
+
+  .hero-emblem{
+    position:absolute;
+    right:36px;
+    top:50%;
+    transform:translateY(-50%);
+    width:110px;
+    height:110px;
+    border-radius:50%;
+    background:#0d2149;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 10px 30px rgba(13,33,73,.3);
+  }
+
+  .hero-emblem svg{
+    width:56px;
+    height:56px;
+  }
+
+  .hero h1{
+    font-size:28px;
+    font-weight:700;
+    margin-bottom:4px;
+  }
+
+  .hero p{
+    font-size:13.5px;
+    color:var(--text-mid);
+    max-width:480px;
+    line-height:1.5;
+    margin-top:8px;
+  }
+
+  /* ---------- ACTION CARDS ---------- */
+
+  .action-grid{
+    display:grid;
+    grid-template-columns:repeat(6,1fr);
+    gap:14px;
+  }
+
+  .action-card{
+    border-radius:16px;
+    padding:16px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    min-height:150px;
+    justify-content:space-between;
+  }
+
+  .action-card .a-icon{
+    width:38px;
+    height:38px;
+    border-radius:10px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  .action-card .a-icon svg{
+    width:19px;
+    height:19px;
+    color:#fff;
+  }
+
+  .action-card h3{
+    font-size:14px;
+    font-weight:700;
+  }
+
+  .action-card p{
+    font-size:11.5px;
+    color:var(--text-mid);
+    line-height:1.4;
+  }
+
+  .a-arrow{
+    width:30px;
+    height:30px;
+    border-radius:50%;
+    background:rgba(255,255,255,.7);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    align-self:flex-end;
+  }
+
+  .ac-blue{
+    background:#e3edff;
+  }
+
+  .ac-blue .a-icon{
+    background:var(--blue);
+  }
+
+  .ac-blue .a-arrow{
+    color:var(--blue);
+  }
+
+  .ac-green{
+    background:#e2f7ec;
+  }
+
+  .ac-green .a-icon{
+    background:var(--green);
+  }
+
+  .ac-green .a-arrow{
+    color:var(--green);
+  }
+
+  .ac-orange{
+    background:#fdecdd;
+  }
+
+  .ac-orange .a-icon{
+    background:var(--orange);
+  }
+
+  .ac-orange .a-arrow{
+    color:var(--orange);
+  }
+
+  .ac-purple{
+    background:#efe7fe;
+  }
+
+  .ac-purple .a-icon{
+    background:var(--purple);
+  }
+
+  .ac-purple .a-arrow{
+    color:var(--purple);
+  }
+
+  .ac-pink{
+    background:#fde5f0;
+  }
+
+  .ac-pink .a-icon{
+    background:var(--pink);
+  }
+
+  .ac-pink .a-arrow{
+    color:var(--pink);
+  }
+
+  .ac-teal{
+    background:#dcf6f2;
+  }
+
+  .ac-teal .a-icon{
+    background:var(--teal);
+  }
+
+  .ac-teal .a-arrow{
+    color:var(--teal);
+  }
+
+  /* ---------- CHAT ---------- */
+
+  .chat-panel{
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius:18px;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+  }
+
+  .chat-header{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:18px 22px;
+    border-bottom:1px solid var(--border);
+  }
+
+  .chat-avatar{
+    width:38px;
+    height:38px;
+    border-radius:50%;
+    background:var(--blue-light);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  .chat-avatar svg{
+    width:20px;
+    height:20px;
+    color:var(--blue);
+  }
+
+  .chat-title{
+    font-size:14.5px;
+    font-weight:700;
+  }
+
+  .chat-status{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    font-size:12px;
+    color:var(--text-light);
+  }
+
+  .chat-status .dot{
+    width:7px;
+    height:7px;
+    background:var(--green);
+    border-radius:50%;
+  }
+
+  .chat-body{
+    padding:22px;
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+  }
+
+  .msg-row{
+    display:flex;
+    gap:12px;
+    max-width:80%;
+  }
+
+  .msg-row.user{
+    align-self:flex-end;
+    flex-direction:row-reverse;
+  }
+
+  .msg-avatar{
+    width:32px;
+    height:32px;
+    border-radius:50%;
+    flex-shrink:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:12px;
+    font-weight:700;
+    color:#fff;
+  }
+
+  .msg-avatar.bot{
+    background:var(--blue-light);
+    color:var(--blue);
+  }
+
+  .msg-avatar.user{
+    background:var(--navy);
+  }
+
+  .bubble{
+    background:#f4f6fb;
+    border-radius:14px;
+    padding:14px 16px;
+    font-size:13.5px;
+    line-height:1.55;
+    color:var(--text-dark);
+  }
+
+  .msg-row.user .bubble{
+    background:var(--blue-light);
+  }
+
+  .timestamp{
+    font-size:10.5px;
+    color:var(--text-light);
+    margin-top:6px;
+    text-align:right;
+  }
+
+  .result-card{
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:16px;
+    margin-top:6px;
+  }
+
+  .result-top{
+    display:flex;
+    gap:12px;
+    align-items:flex-start;
+  }
+
+  .result-icon{
+    width:38px;
+    height:38px;
+    border-radius:10px;
+    background:var(--blue-light);
+    flex-shrink:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  .result-icon svg{
+    width:18px;
+    height:18px;
+    color:var(--blue);
+  }
+
+  .result-title-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+
+  .result-title-row h4{
+    font-size:14.5px;
+    font-weight:700;
+  }
+
+  .tag-relevant{
+    background:#e2f7ec;
+    color:var(--green);
+    font-size:10.5px;
+    font-weight:700;
+    padding:3px 9px;
+    border-radius:20px;
+  }
+
+  .result-sub{
+    font-size:13px;
+    font-weight:600;
+    margin:4px 0 6px;
+  }
+
+  .result-clause{
+    font-size:12px;
+    color:var(--text-mid);
+    margin-bottom:6px;
+  }
+
+  .result-desc{
+    font-size:12.5px;
+    color:var(--text-mid);
+    line-height:1.5;
+    margin-bottom:12px;
+  }
+
+  .confidence-row{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:12px;
+  }
+
+  .confidence-label{
+    font-size:11.5px;
+    color:var(--text-mid);
+    white-space:nowrap;
+  }
+
+  .bar-track{
+    flex:1;
+    height:6px;
+    background:#eef1f7;
+    border-radius:10px;
+    overflow:hidden;
+  }
+
+  .bar-fill{
+    height:100%;
+    background:var(--green);
+    border-radius:10px;
+    width:96%;
+  }
+
+  .view-btn{
+    border:1px solid var(--blue);
+    color:var(--blue);
+    background:#fff;
+    font-size:12px;
+    font-weight:600;
+    padding:7px 14px;
+    border-radius:8px;
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+  }
+
+  .also-relevant{
+    font-size:11.5px;
+    color:var(--text-mid);
+    margin-top:12px;
+    padding-top:12px;
+    border-top:1px solid var(--border);
+  }
+
+  .also-relevant b{
+    color:var(--text-dark);
+  }
+
+  .chat-input-bar{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:16px 22px;
+    border-top:1px solid var(--border);
+  }
+
+  .chat-input-bar input{
+    flex:1;
+    border:none;
+    outline:none;
+    font-size:13.5px;
+    color:var(--text-dark);
+    background:transparent;
+  }
+
+  .plus-btn,
+  .mic-btn{
+    width:34px;
+    height:34px;
+    border-radius:50%;
+    background:#f4f6fb;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:var(--text-mid);
+    flex-shrink:0;
+  }
+
+  .send-btn{
+    width:38px;
+    height:38px;
+    border-radius:50%;
+    background:var(--blue);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#fff;
+    flex-shrink:0;
+  }
+
+  /* ---------- RIGHT COLUMN ---------- */
+
+  .col-right{
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+  }
+
+  .card{
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:18px;
+  }
+
+  .isi-card{
+    background:linear-gradient(
+      150deg,
+      #9fd8b8 0%,
+      #6fbf9a 55%,
+      #4fae87 100%
+    );
+    color:#fff;
+    border-radius:16px;
+    padding:22px;
+    position:relative;
+    overflow:hidden;
+    min-height:190px;
+  }
+
+  .isi-card h3{
+    font-size:19px;
+    line-height:1.25;
+    margin-bottom:10px;
+  }
+
+  .isi-card p{
+    font-size:12.5px;
+    line-height:1.5;
+    opacity:.92;
+    max-width:65%;
+    margin-bottom:16px;
+  }
+
+  .isi-btn{
+    background:#0d2149;
+    color:#fff;
+    border:none;
+    font-size:12.5px;
+    font-weight:700;
+    padding:9px 16px;
+    border-radius:9px;
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+  }
+
+  .isi-phone{
+    position:absolute;
+    right:12px;
+    bottom:0;
+    width:80px;
+    height:150px;
+    background:#0f1b33;
+    border-radius:14px 14px 0 0;
+    border:5px solid #0f1b33;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-start;
+    padding-top:14px;
+  }
+
+  .isi-phone .isi-badge{
+    width:44px;
+    height:44px;
+    border-radius:8px;
+    background:#fff;
+    color:#0d2149;
+    font-size:9px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:800;
+    margin-bottom:8px;
+  }
+
+  .isi-phone .check{
+    width:26px;
+    height:26px;
+    border-radius:50%;
+    background:#22c55e;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  .isi-phone .check svg{
+    width:14px;
+    height:14px;
+    color:#fff;
+  }
+
+  .card-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:14px;
+  }
+
+  .card-head h3{
+    font-size:15px;
+    font-weight:700;
+  }
+
+  .view-all{
+    font-size:12px;
+    color:var(--blue);
+    font-weight:600;
+  }
+
+  .search-item{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:10px 0;
+    border-bottom:1px solid var(--border);
+  }
+
+  .search-item:last-child{
+    border-bottom:none;
+    padding-bottom:0;
+  }
+
+  .search-item .s-icon{
+    width:34px;
+    height:34px;
+    border-radius:9px;
+    background:#f4f6fb;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:var(--text-mid);
+    flex-shrink:0;
+  }
+
+  .search-item .s-icon svg{
+    width:16px;
+    height:16px;
+  }
+
+  .search-item .s-text{
+    flex:1;
+    font-size:13px;
+    font-weight:600;
+  }
+
+  .search-item .s-time{
+    font-size:11px;
+    color:var(--text-light);
+    font-weight:400;
+    margin-top:2px;
+  }
+
+  .search-item .chev{
+    color:var(--text-light);
+  }
+
+  .stats-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+  }
+
+  .stat-box{
+    background:#f8f9fc;
+    border-radius:12px;
+    padding:14px;
+  }
+
+  .stat-box .s-icon-round{
+    width:32px;
+    height:32px;
+    border-radius:9px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-bottom:10px;
+  }
+
+  .stat-box .s-icon-round svg{
+    width:16px;
+    height:16px;
+    color:#fff;
+  }
+
+  .stat-box .num{
+    font-size:17px;
+    font-weight:800;
+  }
+
+  .stat-box .lbl{
+    font-size:11px;
+    color:var(--text-mid);
+    margin-top:2px;
+  }
+
+  .si-blue{
+    background:var(--blue);
+  }
+
+  .si-green{
+    background:var(--green);
+  }
+
+  .si-purple{
+    background:var(--purple);
+  }
+
+  .si-teal{
+    background:var(--teal);
+  }
+
+  .alert-card{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    background:#fff9e8;
+    border:1px solid #f7e6ad;
+    border-radius:14px;
+    padding:14px 16px;
+  }
+
+  .alert-card .a-ico{
+    width:38px;
+    height:38px;
+    border-radius:50%;
+    background:#fdecc0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+  }
+
+  .alert-card .a-ico svg{
+    width:18px;
+    height:18px;
+    color:#d69e00;
+  }
+
+  .alert-card .a-txt h4{
+    font-size:13px;
+    font-weight:700;
+  }
+
+  .alert-card .a-txt p{
+    font-size:11.5px;
+    color:var(--text-mid);
+    margin-top:2px;
+  }
+
+  .alert-card .chev{
+    margin-left:auto;
+    color:var(--text-light);
+  }
+</style>
+</head>
+
+<body>
+
+<!-- ================= SIDEBAR ================= -->
+
+<aside class="sidebar">
+
+  <div class="brand">
+
+    <div class="brand-icon">
+      <svg viewBox="0 0 24 24" fill="none">
+        <path
+          d="M12 2L2 19h20L12 2z"
+          stroke="#0d2149"
+          stroke-width="1.6"
+          stroke-linejoin="round"
+        />
+        <circle
+          cx="12"
+          cy="14"
+          r="2.4"
+          fill="#e11d2e"
+        />
+      </svg>
+    </div>
+
+    <div>
+      <div class="brand-name">
+        BIS AI Assistant
+      </div>
+
+      <div class="brand-tag">
+        Trusted Standards. Safer Tomorrow.
+      </div>
+    </div>
+
+  </div>
+
+
+  <nav class="main-nav">
+
+    <!-- HOME -->
+
+    <a href="index.html" class="nav-item active">
+
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <path d="M3 11l9-8 9 8"/>
+        <path d="M5 10v10h14V10"/>
+      </svg>
+
+      Home
+
+    </a>
+
+
+    <!-- ASK BIS AI -->
+
+    <a href="ask-bis-ai.html" class="nav-item">
+
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <path
+          d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+        />
+      </svg>
+
+      Ask BIS AI
+
+    </a>
+
+
+    <!-- VERIFY PHOTO -->
+
+    <a href="verify-photo.html" class="nav-item">
+
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <path
+          d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"
+        />
+
+        <circle
+          cx="12"
+          cy="13"
+          r="4"
+        />
+      </svg>
+
+      Verify by Photo
+
+    </a>
+
+
+    <!-- COMPLIANCE -->
+
+    <a href="compliance.html" class="nav-item">
+
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <path d="M3 3v18h18"/>
+
+        <rect
+          x="7"
+          y="12"
+          width="3"
+          height="6"
+        />
+
+        <rect
+          x="12"
+          y="8"
+          width="3"
+          height="10"
+        />
+
+        <rect
+          x="17"
+          y="5"
+          width="3"
+          height="13"
+        />
+      </svg>
+
+      Compliance Analyzer
+
+    </a>
+
+
+    <!-- STANDARDS GRAPH -->
+
+    <a href="standards-graph.html" class="nav-item">
+
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <circle
+          cx="6"
+          cy="6"
+          r="2.5"
+        />
+
+        <circle
+          cx="18"
+          cy="6"
+          r="2.5"
+        />
+
+        <circle
+          cx="12"
+          cy="18"
+          r="2.5"
+        />
+
+        <path d="M8 7l6 9M16 7l-6 9"/>
+      </svg>
+
+      Standards Graph
+
+    </a>
+
+
+    <!-- DRAFT ALERTS -->
+
+    <a href="draft-alerts.html" class="nav-item">
+
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <path
+          d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"
+        />
+
+        <path
+          d="M13.7 21a2 2 0 0 1-3.4 0"
+        />
+      </svg>
+
+      Draft Alerts
+
+      <span class="badge">
+        3
+      </span>
+
+    </a>
+
+
+    <!-- LIBRARY -->
+
+    <a href="library.html" class="nav-item">
+
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <path
+          d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"
+        />
+
+        <path
+          d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"
+        />
+      </svg>
+
+      My Library
+
+    </a>
+
+
+    <!-- HISTORY -->
+
+    <a href="history.html" class="nav-item">
+
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <circle
+          cx="12"
+          cy="12"
+          r="9"
+        />
+
+        <path
+          d="M12 7v5l3 3"
+        />
+      </svg>
+
+      History
+
+    </a>
+
+  </nav>
+
+
+  <div class="sidebar-footer">
+
+    <div class="bis-card">
+
+      <div class="emblem">
+        🏛️
+      </div>
+
+      <h4>
+        Bureau of Indian Standards
+      </h4>
+
+      <p>
+        Ministry of Consumer Affairs,<br>
+        Food &amp; Public Distribution
+      </p>
+
+      <div class="learn">
+        Learn more →
+      </div>
+
+    </div>
+
+  </div>
+
+</aside>
+
+
+<!-- ================= MAIN ================= -->
+
+<div class="main">
+
+  <header>
+
+    <div class="search-box">
+
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <circle
+          cx="11"
+          cy="11"
+          r="7"
+        />
+
+        <path
+          d="M21 21l-4.3-4.3"
+        />
+      </svg>
+
+      Search for standards, services or ask a question...
+
+    </div>
+
+
+    <div class="header-right">
+
+      <div class="lang-pill">
+
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          width="15"
+          height="15"
+        >
+          <circle
+            cx="12"
+            cy="12"
+            r="9"
+          />
+
+          <path
+            d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"
+          />
+        </svg>
+
+        English
+
+      </div>
+
+
+      <div class="icon-btn">
+
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          width="17"
+          height="17"
+        >
+          <path
+            d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"
+          />
+
+          <path
+            d="M19 10v1a7 7 0 0 1-14 0v-1M12 18v4"
+          />
+        </svg>
+
+      </div>
+
+
+      <div class="icon-btn">
+
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          width="17"
+          height="17"
+        >
+          <path
+            d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"
+          />
+
+          <path
+            d="M13.7 21a2 2 0 0 1-3.4 0"
+          />
+        </svg>
+
+        <div class="dot"></div>
+
+      </div>
+
+
+      <div class="user-chip">
+
+        <div class="user-avatar">
+          U
+        </div>
+
+        <div class="user-meta">
+
+          <div class="name">
+            User
+          </div>
+
+          <div class="role">
+            Industry
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </header>
+
+
+  <div class="content">
+
+    <!-- ===== LEFT / CENTER COLUMN ===== -->
+
+    <div class="col-main">
+
+
+      <div class="hero">
+
+        <h1>
+          Hello! 👋
+        </h1>
+
+        <h1>
+          How can I help you today?
+        </h1>
+
+        <p>
+          Ask in simple language, upload a product photo,
+          or analyze your documents. Get accurate answers
+          with exact IS codes and clause references.
+        </p>
+
+
+        <div class="hero-emblem">
+
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+          >
+
+            <path
+              d="M12 2L2 19h20L12 2z"
+              stroke="#fff"
+              stroke-width="1.6"
+              stroke-linejoin="round"
+            />
+
+            <circle
+              cx="12"
+              cy="14"
+              r="2.4"
+              fill="#e11d2e"
+            />
+
+          </svg>
+
+        </div>
+
+      </div>
+
+
+      <div class="action-grid">
+
+
+        <div class="action-card ac-blue">
+
+          <div class="a-icon">
+
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#fff"
+              stroke-width="2"
+            >
+              <path
+                d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+              />
+            </svg>
+
+          </div>
+
+          <div>
+
+            <h3>
+              Ask BIS AI
+            </h3>
+
+            <p>
+              Get answers with IS codes &amp; clauses
+            </p>
+
+          </div>
+
+          <div class="a-arrow">
+            →
+          </div>
+
+        </div>
+
+
+        <div class="action-card ac-green">
+
+          <div class="a-icon">
+
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#fff"
+              stroke-width="2"
+            >
+              <path
+                d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"
+              />
+
+              <circle
+                cx="12"
+                cy="13"
+                r="4"
+              />
+            </svg>
+
+          </div>
+
+          <div>
+
+            <h3>
+              Verify by Photo
+            </h3>
+
+            <p>
+              Check ISI mark / license number
+            </p>
+
+          </div>
+
+          <div class="a-arrow">
+            →
+          </div>
+
+        </div>
+
+
+        <div class="action-card ac-orange">
+
+          <div class="a-icon">
+
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#fff"
+              stroke-width="2"
+            >
+              <path
+                d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+              />
+
+              <path
+                d="M14 2v6h6"
+              />
+            </svg>
+
+          </div>
+
+          <div>
+
+            <h3>
+              Compliance Analyzer
+            </h3>
+
+            <p>
+              Find gaps in your specifications
+            </p>
+
+          </div>
+
+          <div class="a-arrow">
+            →
+          </div>
+
+        </div>
+
+
+        <div class="action-card ac-purple">
+
+          <div class="a-icon">
+
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#fff"
+              stroke-width="2"
+            >
+              <circle
+                cx="6"
+                cy="6"
+                r="2.5"
+              />
+
+              <circle
+                cx="18"
+                cy="6"
+                r="2.5"
+              />
+
+              <circle
+                cx="12"
+                cy="18"
+                r="2.5"
+              />
+
+              <path
+                d="M8 7l6 9M16 7l-6 9"
+              />
+
+            </svg>
+
+          </div>
+
+          <div>
+
+            <h3>
+              Standards Graph
+            </h3>
+
+            <p>
+              Explore related standards
+            </p>
+
+          </div>
+
+          <div class="a-arrow">
+            →
+          </div>
+
+        </div>
+
+
+        <div class="action-card ac-pink">
+
+          <div class="a-icon">
+
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#fff"
+              stroke-width="2"
+            >
+              <path
+                d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"
+              />
+
+              <path
+                d="M19 10v1a7 7 0 0 1-14 0v-1M12 18v4"
+              />
+
+            </svg>
+
+          </div>
+
+          <div>
+
+            <h3>
+              Voice Assistant
+            </h3>
+
+            <p>
+              Speak in Hindi or regional languages
+            </p>
+
+          </div>
+
+          <div class="a-arrow">
+            →
+          </div>
+
+        </div>
+
+
+        <div class="action-card ac-teal">
+
+          <div class="a-icon">
+
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#fff"
+              stroke-width="2"
+            >
+
+              <path
+                d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"
+              />
+
+              <path
+                d="M13.7 21a2 2 0 0 1-3.4 0"
+              />
+
+            </svg>
+
+          </div>
+
+          <div>
+
+            <h3>
+              Draft Alerts
+            </h3>
+
+            <p>
+              Stay updated on new standards
+            </p>
+
+          </div>
+
+          <div class="a-arrow">
+            →
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- ================= CHAT PANEL ================= -->
+
+      <div class="chat-panel">
+
+
+        <div class="chat-header">
+
+          <div class="chat-avatar">
+
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#2f6fed"
+              stroke-width="2"
+            >
+              <path
+                d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+              />
+            </svg>
+
+          </div>
+
+          <div>
+
+            <div class="chat-title">
+              BIS AI Assistant
+            </div>
+
+            <div class="chat-status">
+
+              <span class="dot"></span>
+
+              Online
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="chat-body">
+
+
+          <div class="msg-row user">
+
+            <div class="msg-avatar user">
+              U
+            </div>
+
+            <div>
+
+              <div class="bubble">
+                I manufacture LED bulbs for household use.
+                Which Indian Standard applies to my product?
+              </div>
+
+              <div class="timestamp">
+                10:24 AM ✓
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div class="msg-row bot">
+
+            <div class="msg-avatar bot">
+
+              <svg
+                viewBox="0 0 24 24"
+                width="16"
+                height="16"
+                fill="none"
+                stroke="#2f6fed"
+                stroke-width="2"
+              >
+                <path
+                  d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+                />
+              </svg>
+
+            </div>
+
+
+            <div style="width:100%;">
+
+              <div class="bubble">
+                Based on your query, here are the most relevant
+                Indian Standards for LED bulbs used in household
+                applications:
+              </div>
+
+
+              <div class="result-card">
+
+
+                <div class="result-top">
+
+                  <div class="result-icon">
+
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="#2f6fed"
+                      stroke-width="2"
+                    >
+
+                      <path
+                        d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+                      />
+
+                      <path
+                        d="M14 2v6h6"
+                      />
+
+                    </svg>
+
+                  </div>
+
+
+                  <div>
+
+                    <div class="result-title-row">
+
+                      <h4>
+                        IS 16102 (Part 1):2012
+                      </h4>
+
+                      <span class="tag-relevant">
+                        Highly Relevant
+                      </span>
+
+                    </div>
+
+
+                    <div class="result-sub">
+                      Self-ballasted LED lamps for general lighting services
+                    </div>
+
+
+                    <div class="result-clause">
+                      Key clause: Clause 1 – Scope
+                    </div>
+
+                  </div>
+
+                </div>
+
+
+                <div class="result-desc">
+                  This standard applies to self-ballasted LED lamps
+                  intended for general lighting services. Your
+                  description of household LED bulbs falls within
+                  this scope.
+                </div>
+
+
+                <div class="confidence-row">
+
+                  <span class="confidence-label">
+                    Confidence: 96%
+                  </span>
+
+                  <div class="bar-track">
+
+                    <div class="bar-fill"></div>
+
+                  </div>
+
+                  <button class="view-btn">
+                    View full standard ↗
+                  </button>
+
+                </div>
+
+
+                <div class="also-relevant">
+                  Also relevant:
+                  <b>IS 16102 (Part 2):2017</b>
+                  · Clause 1 – Scope · Confidence: 91%
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="chat-input-bar">
+
+          <div class="plus-btn">
+            +
+          </div>
+
+          <input
+            type="text"
+            placeholder="Type your message here..."
+          >
+
+          <div class="mic-btn">
+
+            <svg
+              viewBox="0 0 24 24"
+              width="16"
+              height="16"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+
+              <path
+                d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"
+              />
+
+              <path
+                d="M19 10v1a7 7 0 0 1-14 0v-1M12 18v4"
+              />
+
+            </svg>
+
+          </div>
+
+
+          <div class="send-btn">
+
+            <svg
+              viewBox="0 0 24 24"
+              width="16"
+              height="16"
+              fill="none"
+              stroke="#fff"
+              stroke-width="2"
+            >
+
+              <path d="M22 2L11 13"/>
+              <path d="M22 2l-7 20-4-9-9-4z"/>
+
+            </svg>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- ================= RIGHT COLUMN ================= -->
+
+    <div class="col-right">
+
+
+      <div class="isi-card">
+
+        <h3>
+          Verify<br>
+          ISI Mark
+        </h3>
+
+        <p>
+          Upload a photo and check authenticity instantly.
+        </p>
+
+        <button class="isi-btn">
+          Try Now →
+        </button>
+
+
+        <div class="isi-phone">
+
+          <div class="isi-badge">
+            ISI
+          </div>
+
+          <div class="check">
+
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#fff"
+              stroke-width="3"
+            >
+              <path d="M20 6L9 17l-5-5"/>
+            </svg>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="card">
+
+        <div class="card-head">
+
+          <h3>
+            Recent Searches
+          </h3>
+
+          <span class="view-all">
+            View all
+          </span>
+
+        </div>
+
+
+        <div class="search-item">
+
+          <div class="s-icon">
+
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+
+              <circle
+                cx="11"
+                cy="11"
+                r="7"
+              />
+
+              <path
+                d="M21 21l-4.3-4.3"
+              />
+
+            </svg>
+
+          </div>
+
+          <div class="s-text">
+
+            LED bulb for household use
+
+            <div class="s-time">
+              2 hours ago
+            </div>
+
+          </div>
+
+          <div class="chev">
+            ›
+          </div>
+
+        </div>
+
+
+        <div class="search-item">
+
+          <div class="s-icon">
+
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+
+              <circle
+                cx="11"
+                cy="11"
+                r="7"
+              />
+
+              <path
+                d="M21 21l-4.3-4.3"
+              />
+
+            </svg>
+
+          </div>
+
+          <div class="s-text">
+
+            Safety helmets for workers
+
+            <div class="s-time">
+              1 day ago
+            </div>
+
+          </div>
+
+          <div class="chev">
+            ›
+          </div>
+
+        </div>
+
+
+        <div class="search-item">
+
+          <div class="s-icon">
+
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+
+              <circle
+                cx="11"
+                cy="11"
+                r="7"
+              />
+
+              <path
+                d="M21 21l-4.3-4.3"
+              />
+
+            </svg>
+
+          </div>
+
+          <div class="s-text">
+
+            Portland cement
+
+            <div class="s-time">
+              2 days ago
+            </div>
+
+          </div>
+
+          <div class="chev">
+            ›
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="card">
+
+        <div class="card-head">
+
+          <h3>
+            Quick Stats
+          </h3>
+
+        </div>
+
+
+        <div class="stats-grid">
+
+
+          <div class="stat-box">
+
+            <div class="s-icon-round si-blue">
+
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#fff"
+                stroke-width="2"
+              >
+
+                <path
+                  d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+                />
+
+                <path
+                  d="M14 2v6h6"
+                />
+
+              </svg>
+
+            </div>
+
+            <div class="num">
+              22,000+
+            </div>
+
+            <div class="lbl">
+              Total Standards
+            </div>
+
+          </div>
+
+
+          <div class="stat-box">
+
+            <div class="s-icon-round si-green">
+
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#fff"
+                stroke-width="2"
+              >
+
+                <path
+                  d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z"
+                />
+
+              </svg>
+
+            </div>
+
+            <div class="num">
+              5.2L+
+            </div>
+
+            <div class="lbl">
+              Licensed Products
+            </div>
+
+          </div>
+
+
+          <div class="stat-box">
+
+            <div class="s-icon-round si-purple">
+
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#fff"
+                stroke-width="2"
+              >
+
+                <path
+                  d="M3 21V9l7-4 7 4v12"
+                />
+
+                <path
+                  d="M10 21v-6h4v6"
+                />
+
+              </svg>
+
+            </div>
+
+            <div class="num">
+              1.8L+
+            </div>
+
+            <div class="lbl">
+              Manufacturers
+            </div>
+
+          </div>
+
+
+          <div class="stat-box">
+
+            <div class="s-icon-round si-teal">
+
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#fff"
+                stroke-width="2"
+              >
+
+                <circle
+                  cx="9"
+                  cy="7"
+                  r="4"
+                />
+
+                <path
+                  d="M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"
+                />
+
+              </svg>
+
+            </div>
+
+            <div class="num">
+              15+
+            </div>
+
+            <div class="lbl">
+              BIS Services
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="alert-card">
+
+        <div class="a-ico">
+
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#d69e00"
+            stroke-width="2"
+          >
+
+            <path
+              d="M9 18h6M12 2a5 5 0 0 0-5 5c0 3-1 4-2 5.5h14C18 11 17 10 17 7a5 5 0 0 0-5-5z"
+            />
+
+          </svg>
+
+        </div>
+
+
+        <div class="a-txt">
+
+          <h4>
+            New Draft Standard Alert
+          </h4>
+
+          <p>
+            3 draft standards relevant to your industry
+          </p>
+
+        </div>
+
+
+        <div class="chev">
+          ›
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+</body>
+</html>
